@@ -21,3 +21,15 @@ class GroupException(Exception):
     """
     def __init__(self) -> None:
         super().__init__("Every Group column should be in the ")
+
+class PoolSizeMinException(Exception):
+    """Raised when a poolsize smaller than 1 is provided
+    """
+    def __init__(self) -> None:
+        super().__init__("The minium size of a pool is 1")
+
+class MaxOverflowSizeException(Exception):
+    """Raised when the max_overflow is smaller than the poolsize
+    """
+    def __init__(self) -> None:
+        super().__init__("The max overflow cannot be smaller than the requested pool")

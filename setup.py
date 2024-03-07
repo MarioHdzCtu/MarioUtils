@@ -8,7 +8,7 @@ setup(
     version="0.0.1",
     description="Utils library for DB connection and logging",
     packages=find_packages(),
-    package_data={'app':['databasemanagement/*'],'app':['logger/*']},
+    package_data={'mario_utils':['databasemanagement/*'],'mario_utils':['logger/*']},
     include_package_data=True,
     # long_description=long_description,
     long_description_content_type="text/markdown",

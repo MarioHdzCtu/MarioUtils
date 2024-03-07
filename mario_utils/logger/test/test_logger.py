@@ -1,7 +1,6 @@
 import pytest
-import src
+from .. import src
 import os
-import pymssql
 
 l = None
 def setup_module(module):

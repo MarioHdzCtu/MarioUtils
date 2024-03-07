@@ -1,47 +1,39 @@
 import pymssql
 from . import exceptions
 import sqlalchemy
+import mariadb
 
 class Database:
 
-    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True,) -> pymssql.Connection:
+    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10):
         self.server = server
         self.user = user
         self.password = password
         self.database = database
         self.as_dict = as_dict
-
-    def connect(self):
-        pass
-
-class MsSQLDatabase(Database):
-
-    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True, port: int = 1433) -> pymssql.Connection:
+        self.pool_size = pool_size
+        self.max_overflow = max_overflow
         self._connection = None
         self._cursor = None
         self._pool = None
-        super().__init__(server, user, password, database, as_dict)
-        self.create_pool()
+        if self.pool_size == sqlalchemy.pool.NullPool:
+            pass
+        else:
+            if self.pool_size < 1:
+                raise exceptions.PoolSizeMinException
+            if self.max_overflow < self.pool_size:
+                raise exceptions.MaxOverflowSizeException
 
     def __enter__(self):
         self.connect()
         self.get_cursor()
         return self
-
-    def __exit__(self,exception_type,exception_value,exception_traceback):
-        self.close_connection()
     
+    def __exit__(self, exception_type, exception_value, exception_traceback):
+        self.close_connection()
+
     def get_connection(self):
-        c = pymssql.connect(
-            server=self.server,
-            user=self.user,
-            password=self.password,
-            database=self.database,
-            as_dict=self.as_dict,
-            login_timeout=20,
-            timeout=20
-        )
-        return c
+        pass
 
     def connect(self):
         self._connection = self._pool.connect()
@@ -101,6 +93,30 @@ class MsSQLDatabase(Database):
 
     def close_connection(self):
         self._connection.close()
+
+class MsSQLDatabase(Database):
+
+    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True, port: int = 1433, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10) -> pymssql.Connection:
+        super().__init__(server, user, password, database, as_dict, pool_size, max_overflow)
+        self.create_pool()
+    
+    def get_connection(self):
+        c = pymssql.connect(
+            server=self.server,
+            user=self.user,
+            password=self.password,
+            database=self.database,
+            as_dict=self.as_dict,
+            login_timeout=20,
+            timeout=20
+        )
+        return c
+    
+    def get_cursor(self):
+        if self._connection is None:
+            raise exceptions.ConnectionException
+        if self._cursor is None:
+            self._cursor = self.connection.cursor()
 
 
 if __name__ == '__main__':

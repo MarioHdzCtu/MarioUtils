@@ -1,7 +1,8 @@
 import pytest
-import src
+from .. import src
 import os
 import pymssql
+from sqlalchemy.pool import NullPool
 
 def test_db_error():
     with pytest.raises(pymssql._pymssql.OperationalError):
@@ -20,5 +21,6 @@ def test_db_success():
             port=os.getenv('DB_PORT'),
             user = os.getenv('DB_USER'),
             password = os.getenv('DB_PASSWORD'),
-            database = os.getenv('DB_DATABASE'))
+            database = os.getenv('DB_DATABASE'),
+            pool_size=NullPool)
     assert db.connected
