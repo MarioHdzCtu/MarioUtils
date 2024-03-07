@@ -1,1 +1,1 @@
-from .manager import MsSQLDatabase
+from .manager import MsSQLDatabase, MariaDatabase
