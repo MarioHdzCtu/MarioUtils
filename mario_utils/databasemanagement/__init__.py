@@ -1,1 +1,1 @@
-from .src import MsSQLDatabase
+from .src import MsSQLDatabase, MariaDatabase
