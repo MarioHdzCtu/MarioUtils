@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="marioutils",
-    version="0.0.1",
+    version="0.0.2",
     description="Utils library for DB connection and logging",
     packages=find_packages(),
     package_data={'mario_utils':['databasemanagement/*'],'mario_utils':['logger/*']},

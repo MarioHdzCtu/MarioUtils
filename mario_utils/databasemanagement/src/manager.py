@@ -141,6 +141,19 @@ class MariaDatabase(Database):
             self._cursor = self.connection.cursor()
         else:
             return self._cursor
+        
+    def fetchall(self):
+        try:
+            res = self._cursor.fetchall()
+            if not self.as_dict:
+                return res
+            else:
+                columns = [a[0] for a in self._cursor.description]
+                results = [{c: v for c, v in zip(columns, r)} for r in res]
+                return results
+        except Exception as e:
+            return e
+        
 
 if __name__ == '__main__':
     print("This package is not meant to run as a main file. If needed to test, use the pytest set in this package.")
