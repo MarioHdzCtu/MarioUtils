@@ -5,11 +5,12 @@ import mariadb
 
 class Database:
 
-    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10):
+    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True,port: int = 1333, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10):
         self.server = server
         self.user = user
         self.password = password
         self.database = database
+        self.port = port
         self.as_dict = as_dict
         self.pool_size = pool_size
         self.max_overflow = max_overflow
@@ -49,7 +50,7 @@ class Database:
             cursor = conn.cursor()
             cursor.execute('SELECT 1 AS test')
             return True
-        except pymssql.Error:
+        except Exception:
             return False
 
     @property
@@ -118,15 +119,28 @@ class MsSQLDatabase(Database):
         if self._cursor is None:
             self._cursor = self.connection.cursor()
 
+class MariaDatabase(Database):
+    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True, port: int = 3306, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10):
+        super().__init__(server, user, password, database, as_dict, port, pool_size, max_overflow)
+        self.create_pool()
+
+    def get_connection(self):
+        c = mariadb.connect(
+            user = self.user,
+            password = self.password,
+            host = self.server,
+            port = self.port,
+            database = self.database
+        )
+        return c
+
+    def get_cursor(self):
+        if self._connection is None:
+            raise exceptions.ConnectionException
+        if self._cursor is None:
+            self._cursor = self.connection.cursor()
+        else:
+            return self._cursor
 
 if __name__ == '__main__':
-    import os
-    db = MsSQLDatabase(
-            server = os.getenv('DB_SERVER'),
-            port=os.getenv('DB_PORT'),
-            user = os.getenv('DB_USER'),
-            password = os.getenv('DB_PASSWORD'),
-            database = os.getenv('DB_DATABASE'))
-    with db as conn:
-        records = conn.execute("SELECT * FROM DockerTest.dbo.Person")
-    print(records)
+    print("This package is not meant to run as a main file. If needed to test, use the pytest set in this package.")
