@@ -5,10 +5,10 @@ with open("mario_utils\README.md", 'r') as f:
 
 setup(
     name="marioutils",
-    version="1.0.2",
+    version="1.1.0",
     description="Utils library for DB connection and logging",
     packages=find_packages(),
-    package_data={'mario_utils':['databasemanagement/*'],'mario_utils':['logger/*']},
+    package_data={'mario_utils': ['databasemanagement/*', 'logger/*']},
     include_package_data=True,
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -21,7 +21,10 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Operating System :: OS Independent"
     ],
-    install_requires=["pymssql >= 2.2.11", "sqlalchemy >= 2.0.25", "mariadb >= 1.1.10"],
+    install_requires=[
+        "pymssql >= 2.2.11",
+        "sqlalchemy >= 2.0.25",
+        "mariadb >= 1.1.10"],
     extras_require={
         "dev": ["pytest>=8.0.0"]
     },

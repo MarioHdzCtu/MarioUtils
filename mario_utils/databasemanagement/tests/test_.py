@@ -48,6 +48,7 @@ def maria_db_error():
             database=os.getenv('DB_mariadb_DATABASE'))
     yield db_error
 
+
 @pytest.mark.skip('Not implemented')
 def test_mssql_db_error(mssql_db_error):
     with pytest.raises(pymssql._pymssql.OperationalError):
@@ -59,6 +60,7 @@ def test_maria_db_error(maria_db_error):
         with maria_db_error as conn:
             conn.connected
 
+
 @pytest.mark.skip('Not implemented')
 def test_mssql_db_success(mssql_db):
     assert mssql_db.connected
@@ -67,3 +69,11 @@ def test_mssql_db_success(mssql_db):
 def test_maria_db_success(maria_db):
     with maria_db as conn:
         assert conn.connected
+
+
+def test_maria_db_execute(maria_db):
+    with maria_db as conn:
+        query = "SELECT * FROM tests.test WHERE id = ?"
+        vals = (1,)
+        res = conn.execute(query=query, vals=vals)
+        assert res == [{'id': 1, 'test_name': 'test1'}]

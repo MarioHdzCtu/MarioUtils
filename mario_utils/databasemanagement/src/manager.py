@@ -3,9 +3,19 @@ from . import exceptions
 import sqlalchemy
 import mariadb
 
+
 class Database:
 
-    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True,port: int = 1333, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10):
+    def __init__(
+            self,
+            server: str,
+            user: str,
+            password: str,
+            database: str = None,
+            as_dict: bool = True,
+            port: int = 1333,
+            pool_size: int | sqlalchemy.pool.NullPool = 5,
+            max_overflow: int = 10):
         self.server = server
         self.user = user
         self.password = password
@@ -29,7 +39,7 @@ class Database:
         self.connect()
         self.get_cursor()
         return self
-    
+
     def __exit__(self, exception_type, exception_value, exception_traceback):
         self.close_connection()
 
@@ -42,7 +52,7 @@ class Database:
     @property
     def connection(self):
         return self._connection
-    
+
     @property
     def connected(self) -> bool:
         try:
@@ -56,7 +66,7 @@ class Database:
     @property
     def cursor(self):
         return self._cursor
-    
+
     def get_cursor(self):
         if self._connection is None:
             raise exceptions.ConnectionException
@@ -65,17 +75,20 @@ class Database:
 
     def create_pool(self):
         if self._pool is None:
-            self._pool = sqlalchemy.pool.QueuePool(self.get_connection, max_overflow=10, pool_size=5)
+            self._pool = sqlalchemy.pool.QueuePool(
+                self.get_connection,
+                max_overflow=10,
+                pool_size=5)
 
     @property
     def pool(self):
         return self._pool
-   
-    def execute(self, query: str):
+
+    def execute(self, query: str, vals: tuple = ()):
         if self._cursor is None:
             raise exceptions.CursorException
         try:
-            self._cursor.execute(query)
+            self._cursor.execute(query, vals)
         except Exception as e:
             return e
         else:
@@ -90,17 +103,34 @@ class Database:
             return e
         else:
             return res
-        return 
+        return
 
     def close_connection(self):
         self._connection.close()
 
+
 class MsSQLDatabase(Database):
 
-    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True, port: int = 1433, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10) -> pymssql.Connection:
-        super().__init__(server, user, password, database, as_dict, pool_size, max_overflow)
+    def __init__(
+            self,
+            server: str,
+            user: str,
+            password: str,
+            database: str = None,
+            as_dict: bool = True,
+            port: int = 1433,
+            pool_size: int | sqlalchemy.pool.NullPool = 5,
+            max_overflow: int = 10) -> pymssql.Connection:
+        super().__init__(
+            server,
+            user,
+            password,
+            database,
+            as_dict,
+            pool_size,
+            max_overflow)
         self.create_pool()
-    
+
     def get_connection(self):
         c = pymssql.connect(
             server=self.server,
@@ -112,25 +142,43 @@ class MsSQLDatabase(Database):
             timeout=20
         )
         return c
-    
+
     def get_cursor(self):
         if self._connection is None:
             raise exceptions.ConnectionException
         if self._cursor is None:
             self._cursor = self.connection.cursor()
 
+
 class MariaDatabase(Database):
-    def __init__(self, server: str, user: str, password: str, database: str = None, as_dict: bool = True, port: int = 3306, pool_size: int | sqlalchemy.pool.NullPool = 5, max_overflow: int = 10):
-        super().__init__(server, user, password, database, as_dict, port, pool_size, max_overflow)
+    def __init__(
+            self,
+            server: str,
+            user: str,
+            password: str,
+            database: str = None,
+            as_dict: bool = True,
+            port: int = 3306,
+            pool_size: int | sqlalchemy.pool.NullPool = 5,
+            max_overflow: int = 10):
+        super().__init__(
+            server,
+            user,
+            password,
+            database,
+            as_dict,
+            port,
+            pool_size,
+            max_overflow)
         self.create_pool()
 
     def get_connection(self):
         c = mariadb.connect(
-            user = self.user,
-            password = self.password,
-            host = self.server,
-            port = self.port,
-            database = self.database
+            user=self.user,
+            password=self.password,
+            host=self.server,
+            port=self.port,
+            database=self.database
         )
         return c
 
@@ -141,7 +189,7 @@ class MariaDatabase(Database):
             self._cursor = self.connection.cursor()
         else:
             return self._cursor
-        
+
     def fetchall(self):
         try:
             res = self._cursor.fetchall()
@@ -153,7 +201,8 @@ class MariaDatabase(Database):
                 return results
         except Exception as e:
             return e
-        
+
 
 if __name__ == '__main__':
-    print("This package is not meant to run as a main file. If needed to test, use the pytest set in this package.")
+    print("""This package is not meant to run as a main file.
+          If needed to test, use the pytest set in this package.""")
