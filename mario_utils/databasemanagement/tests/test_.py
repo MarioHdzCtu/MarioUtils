@@ -71,9 +71,17 @@ def test_maria_db_success(maria_db):
         assert conn.connected
 
 
-def test_maria_db_execute(maria_db):
+def test_maria_db_select(maria_db):
     with maria_db as conn:
         query = "SELECT * FROM tests.test WHERE id = ?"
         vals = (1,)
-        res = conn.execute(query=query, vals=vals)
+        res = conn.select(query=query, vals=vals)
         assert res == [{'id': 1, 'test_name': 'test1'}]
+
+
+def test_maria_db_insert(maria_db):
+    with maria_db as conn:
+        query = """INSERT INTO tests.test(test_name) VALUES(?)"""
+        data = ('test',)
+        res = conn.insert(query=query, data=data)
+        assert res == 1

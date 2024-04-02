@@ -1,14 +1,14 @@
 from setuptools import find_packages, setup
 
-with open("mario_utils\README.md", 'r') as f:
+with open("mario_utils/README.md", 'r') as f:
     long_description = f.read()
 
 setup(
     name="marioutils",
-    version="1.1.0",
+    version="1.1.1",
     description="Utils library for DB connection and logging",
     packages=find_packages(),
-    package_data={'mario_utils': ['databasemanagement/*', 'logger/*']},
+    package_data={'mario_utils': ['databasemanagement/*', 'logger/*', '*']},
     include_package_data=True,
     long_description=long_description,
     long_description_content_type="text/markdown",

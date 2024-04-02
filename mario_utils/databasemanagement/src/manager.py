@@ -84,7 +84,7 @@ class Database:
     def pool(self):
         return self._pool
 
-    def execute(self, query: str, vals: tuple = ()):
+    def select(self, query: str, vals: tuple = ()):
         if self._cursor is None:
             raise exceptions.CursorException
         try:
@@ -92,7 +92,24 @@ class Database:
         except Exception as e:
             return e
         else:
-            return self.fetchall()
+            res = self.fetchall()
+            return res
+        finally:
+            self.close_connection()
+
+    def insert(self, query: str, data: tuple | list[tuple] = ()) -> int:
+        if self._cursor is None:
+            raise exceptions.CursorException
+        try:
+            if isinstance(data, tuple):
+                self._cursor.execute(query, data)
+            else:
+                self._cursor.executemany(query, data)
+            self._connection.commit()
+        except Exception as e:
+            return e
+        else:
+            return self._cursor.rowcount
         finally:
             self.close_connection()
 
@@ -103,7 +120,6 @@ class Database:
             return e
         else:
             return res
-        return
 
     def close_connection(self):
         self._connection.close()
@@ -186,7 +202,7 @@ class MariaDatabase(Database):
         if self._connection is None:
             raise exceptions.ConnectionException
         if self._cursor is None:
-            self._cursor = self.connection.cursor()
+            self._cursor = self._connection.cursor()
         else:
             return self._cursor
 
