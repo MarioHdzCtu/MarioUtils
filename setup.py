@@ -1,11 +1,11 @@
 from setuptools import find_packages, setup
 
-with open("./app/README.md", 'r') as f:
+with open("mario_utils\README.md", 'r') as f:
     long_description = f.read()
 
 setup(
     name="marioutils",
-    version="1.0.0",
+    version="1.0.1",
     description="Utils library for DB connection and logging",
     packages=find_packages(),
     package_data={'mario_utils':['databasemanagement/*'],'mario_utils':['logger/*']},
@@ -19,7 +19,7 @@ setup(
     classifiers=[
         "License :: OSI Approved : MIT License",
         "Programming Language :: Python :: 3.10.12",
-        "Operating System :: OS Independent" 
+        "Operating System :: OS Independent"
     ],
     install_requires=["pymssql >= 2.2.11", "sqlalchemy >= 2.0.25", "mariadb >= 1.1.10"],
     extras_require={
