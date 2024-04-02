@@ -2,6 +2,7 @@ import logging
 from logging import FileHandler
 from enum import Enum
 
+
 class Levels(Enum):
     CRITICAL = 50
     FATAL = CRITICAL
@@ -12,19 +13,20 @@ class Levels(Enum):
     DEBUG = 10
     NOTSET = 0
 
-def my_logger(name: str = 'basic', level: int | str = Levels.DEBUG.value):
 
-    logging.basicConfig(level=level)
+def logger(name: str = 'basic', level: Levels = Levels.DEBUG):
+
+    logging.basicConfig(level=level.value)
 
     logger = logging.getLogger(name)
-    logger.setLevel(level)
+    logger.setLevel(level.value)
 
     handler = FileHandler(
-        filename= name,
+        filename=name,
         mode='a',
         encoding='UTF-8'
     )
-    handler.setLevel(level)
+    handler.setLevel(level.value)
     formatter = logging.Formatter(
         fmt='%(levelname)s - %(asctime)s - %(message)s',
         datefmt="%Y-%m-%d %H:%M:%S"
@@ -35,12 +37,10 @@ def my_logger(name: str = 'basic', level: int | str = Levels.DEBUG.value):
 
     return logger
 
+
 if __name__ == '__main__':
-    logger = my_logger(name='test.log')
+    logger = logger(name='test.log')
     logger.debug('Debug')
     logger.info('Info')
     logger.warning('Warning')
     logger.critical('Prueba')
-
-    # with open('basic.log', 'r') as f:
-    #     print(f.read())

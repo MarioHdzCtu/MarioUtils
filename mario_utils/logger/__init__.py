@@ -1,1 +1,3 @@
-from .src import my_logger, Levels
+from .src import logger, Levels
+
+__all__ = ['logger', 'Levels']
