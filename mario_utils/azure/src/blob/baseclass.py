@@ -11,6 +11,11 @@ class AzureBlobManager(ABC):
         self.storage_account_name = storage_account_name
         self._authenticate_()
         self.blob_service_client: BlobServiceClient = None
+        self.name: str = ''
+
+    def __del__(self):
+        if self.blob_service_client:
+            self.blob_service_client.close()
 
     @abstractmethod
     def _authenticate_(self) -> None:
@@ -133,3 +138,19 @@ class AzureBlobManager(ABC):
             container_name=container_name)
         blob_list = container_client.list_blob_names()
         return list(blob_list)
+
+    def download_blob(self, container: str, blob_name: str) -> bytes:
+        """Downloads bytes for a given blob resource
+
+        Args:
+            container (str): The container where the blob resource lives
+            blob_name (str): The name of the blob resource, it should include the virtual folder if exists
+
+        Returns:
+            bytes: The content of the file
+        """
+        container_client = self._generate_container_client_(container_name=container)
+        
+        content: bytes = container_client.download_blob(blob=blob_name).readall()
+
+        return content

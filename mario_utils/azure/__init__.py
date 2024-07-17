@@ -1,1 +1,1 @@
-from .src.blob import create_manager
+from .src.blob.management import create_blob_manager

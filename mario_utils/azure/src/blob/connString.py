@@ -6,6 +6,7 @@ class AzureBlobManagementConnectionString(AzureBlobManager):
     
     def __init__(self, storage_account_name: str) -> None:
         super().__init__(storage_account_name)
+        self.name = 'connectionString'
 
     def _authenticate_(self) -> None:
         self.connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')

@@ -8,6 +8,7 @@ class AzureBlobManagementDefaultCredential(AzureBlobManager):
     
     def __init__(self, storage_account_name: str) -> None:
         super().__init__(storage_account_name)
+        self.name = 'defaultCredential'
 
 
     def _authenticate_(self) -> None:

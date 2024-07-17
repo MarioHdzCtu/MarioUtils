@@ -1,1 +1,1 @@
-from .management import create_manager
+from .management import create_blob_manager
