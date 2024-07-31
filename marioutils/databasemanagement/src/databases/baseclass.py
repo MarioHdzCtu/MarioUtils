@@ -87,7 +87,7 @@ class Database:
         try:
             self._cursor.execute(query, vals)
         except Exception as e:
-            return e
+            raise Exception("Error selecting data") from e
         else:
             res = self.fetchall()
             return res
@@ -104,7 +104,7 @@ class Database:
                 self._cursor.executemany(query, data)
             self._connection.commit()
         except Exception as e:
-            return e
+            raise Exception("Error when inserting data") from e
         else:
             return self._cursor.rowcount
         finally:
@@ -112,9 +112,9 @@ class Database:
 
     def fetchall(self):
         try:
-            res = self._cursor.fetchall()
+            res = list(self._cursor.fetchall())
         except Exception as e:
-            return e
+            raise Exception("Error while fetching results") from e
         else:
             return res
 

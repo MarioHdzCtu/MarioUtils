@@ -68,10 +68,11 @@ def maria_db_error():
     yield db_error
 
 
-@pytest.mark.skip('Not implemented')
+
 def test_mssql_db_error(mssql_db_error):
-    with pytest.raises(pymssql._pymssql.OperationalError):
-        mssql_db_error.connected
+    with pytest.raises(TypeError):
+        with mssql_db_error as conn:
+            conn.connected
 
 
 def test_maria_db_error(maria_db_error):
@@ -80,7 +81,7 @@ def test_maria_db_error(maria_db_error):
             conn.connected
 
 
-@pytest.mark.skip('Not implemented')
+
 def test_mssql_db_success(mssql_db):
     assert mssql_db.connected
 
