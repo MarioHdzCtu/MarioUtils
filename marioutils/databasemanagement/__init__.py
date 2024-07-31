@@ -1,2 +1,2 @@
-from .src import MsSQLDatabase, MariaDatabase
-__all__ = ['MsSQLDatabase', 'MariaDatabase']
+from .src.databases.manager import create_db_manager
+
